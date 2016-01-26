@@ -2,7 +2,6 @@ package graphics;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
@@ -14,6 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import logic.Parameters;
 
 
 public class SettingsPanel extends JPanel implements ActionListener, ChangeListener{
@@ -48,9 +49,9 @@ public class SettingsPanel extends JPanel implements ActionListener, ChangeListe
 		addPredatorButton.addActionListener(this);
 		removePredatorsButton.addActionListener(this);
 		
-		separationSlider = new JSlider(1, 100);
-		alignmentSlider = new JSlider(1, 100);
-		cohesionSlider = new JSlider(1, 100);
+		separationSlider = new JSlider(0, 100, Parameters.separationWeight);
+		alignmentSlider = new JSlider(0, 100, Parameters.alignmentWeight);
+		cohesionSlider = new JSlider(0, 100, Parameters.cohesionWeight);
 		separationSlider.addChangeListener(this);
 		alignmentSlider.addChangeListener(this);
 		cohesionSlider.addChangeListener(this);

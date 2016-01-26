@@ -20,7 +20,7 @@ public class Predator extends Boid {
 		}
 	}
 	
-	public void tick(ArrayList<Boid> boidList){
+	public void tick(ArrayList<Boid> boidList, ArrayList<Obstacle> obstacleList){
 		//TODO
 		
 	}

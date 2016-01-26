@@ -48,16 +48,16 @@ public class Boid {
 	protected double distanceToBoid(Boid other){
 		int diffX = x - other.x;
 		if(Math.abs(diffX) > 0.5 * Parameters.width){
-			diffX = Parameters.width - diffX;
+			diffX = Parameters.width - Math.abs(diffX);
 		}
 		int diffY = y - other.y;
-		if(Math.abs(diffX) > 0.5 * Parameters.height){
-			diffY = Parameters.height - diffY;
+		if(Math.abs(diffY) > 0.5 * Parameters.height){
+			diffY = Parameters.height - Math.abs(diffY);
 		}
-		return Math.pow(Math.pow(diffX, 2) + Math.pow(diffY, 2), .5) - image.getHeight()/2 - other.image.getHeight()/2;
+		return Math.pow(Math.pow(diffX, 2) + Math.pow(diffY, 2), .5);
 	}
 
-	public void tick(ArrayList<Boid> boidList, ArrayList<Predator> predatorList){
+	public void tick(ArrayList<Boid> boidList, ArrayList<Predator> predatorList, ArrayList<Obstacle> obstacleList){
 		double distance;
 		ArrayList<Boid> neighbors = new ArrayList<Boid>();
 		for(Boid other: boidList){
@@ -92,8 +92,8 @@ public class Boid {
 				vector = getVectorToBoid(other);
 				diffX = -vector.getKey();
 				diffY = -vector.getValue();
-				sepForceX += diffX/distance;
-				sepForceY += diffY/distance;
+				sepForceX += diffX/(distance );
+				sepForceY += diffY/(distance );
 			}
 		}
 
@@ -103,6 +103,8 @@ public class Boid {
 
 	private void calculateAlignment(ArrayList<Boid> neighbors){
 		if(neighbors.size() == 0){
+			velX += Parameters.alignmentWeight * Math.cos(direction);
+			velY += Parameters.alignmentWeight * Math.sin(direction);
 			return;
 		}
 		double result = 0.0;
@@ -141,8 +143,8 @@ public class Boid {
 		double yPos = 0.0;
 		for(Boid other: neighbors){
 			vector = getVectorToBoid(other);
-			xPos = vector.getKey();
-			yPos = vector.getValue();
+			xPos += vector.getKey();
+			yPos += vector.getValue();
 		}
 		xPos /= neighbors.size();
 		yPos /= neighbors.size();
@@ -167,7 +169,7 @@ public class Boid {
 
 		velY /= speed;
 		addition = 0;
-		p = random.nextDouble();
+		//p = random.nextDouble();
 		if( p < Math.abs(velY)){
 			addition = new Double(Math.signum(velY)).intValue();
 		}
@@ -202,9 +204,7 @@ public class Boid {
 		else if(diffY < - Parameters.height /2){
 			diffY += Parameters.height;
 		}
-		Pair<Integer, Integer> ret = new Pair<Integer, Integer>(-diffX, -diffY);
-		
-		return ret;
+		return new Pair<Integer, Integer>(-diffX, -diffY);
 	}
 }
 

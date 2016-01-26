@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import javax.swing.JPanel;
 
 import logic.Boid;
+import logic.Obstacle;
 import logic.Parameters;
 import logic.Predator;
 
@@ -24,7 +25,7 @@ public class BoidArea extends JPanel implements Runnable, PropertyChangeListener
 
 	ArrayList<Boid> boidList;
 	ArrayList<Predator> predatorList;
-	Boid b;
+	ArrayList<Obstacle> obstacleList;
 
 	public BoidArea(){
 		super();
@@ -32,7 +33,8 @@ public class BoidArea extends JPanel implements Runnable, PropertyChangeListener
 		setPreferredSize(new Dimension(Parameters.width, Parameters.height));
 		boidList = new ArrayList<Boid>();
 		predatorList = new ArrayList<Predator>();
-		for(int i = 0; i < 300; i++){
+		obstacleList = new ArrayList<Obstacle>();
+		for(int i = 0; i < 250; i++){
 			boidList.add(new Boid());
 		}
 
@@ -42,6 +44,7 @@ public class BoidArea extends JPanel implements Runnable, PropertyChangeListener
 	protected void paintComponent(Graphics g){
 		super.paintComponent(g);
 		AffineTransform xform;
+		AffineTransformOp op;
 		for(Boid boid: boidList){
 
 			xform = new AffineTransform();
@@ -49,18 +52,21 @@ public class BoidArea extends JPanel implements Runnable, PropertyChangeListener
 			xform.rotate(boid.getDirection());
 			xform.translate(-.5*boid.image.getWidth(), -.5*boid.image.getHeight());
 			
-			AffineTransformOp op = new AffineTransformOp(xform, AffineTransformOp.TYPE_BILINEAR);
+			op = new AffineTransformOp(xform, AffineTransformOp.TYPE_BILINEAR);
 
-			g.drawImage(op.filter(boid.image, null), boid.getX(), boid.getY(), null);
+			g.drawImage(op.filter(boid.image, null), boid.getX() -boid.image.getWidth()/2 , boid.getY()-boid.image.getHeight()/2, null);
 
+		}
+		for(Obstacle o: obstacleList){
+			g.drawOval(o.getX() - o.getRadius(), o.getY() - o.getRadius(), o.getRadius() * 2, o.getRadius() * 2);
 		}
 
 	}
 	private void addObstacle(){
-		//TODO
+		obstacleList.add(new Obstacle());
 	}
 	private void removeObstacles(){
-		//TODO
+		obstacleList.clear();
 	}
 	private void addPredator(){
 		//TODO
@@ -79,10 +85,10 @@ public class BoidArea extends JPanel implements Runnable, PropertyChangeListener
 				e.printStackTrace();
 			}
 			for(Boid boid: boidList){
-				boid.tick(boidList, predatorList);
+				boid.tick(boidList, predatorList, obstacleList);
 			}
 			for(Predator predator: predatorList){
-				predator.tick(boidList);
+				predator.tick(boidList, obstacleList);
 			}
 			repaint();
 		}
