@@ -49,7 +49,7 @@ public class SettingsPanel extends JPanel implements ActionListener, ChangeListe
 		addPredatorButton.addActionListener(this);
 		removePredatorsButton.addActionListener(this);
 		
-		separationSlider = new JSlider(0, 100, Parameters.separationWeight);
+		separationSlider = new JSlider(0, 300, Parameters.separationWeight);
 		alignmentSlider = new JSlider(0, 100, Parameters.alignmentWeight);
 		cohesionSlider = new JSlider(0, 100, Parameters.cohesionWeight);
 		separationSlider.addChangeListener(this);

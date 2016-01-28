@@ -2,7 +2,7 @@ package logic;
 
 import java.util.Random;
 
-public class Obstacle {
+public class Obstacle implements Coordinates{
 
 	private int x, y, radius;
 	private static Random random = new Random();
