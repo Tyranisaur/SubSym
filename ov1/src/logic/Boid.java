@@ -260,17 +260,6 @@ public class Boid implements Coordinates{
 
 	}
 
-	public ArrayList<Boid> getNeigbors(ArrayList<Boid> boidList){
-		ArrayList<Boid> ret = new ArrayList<Boid>();
-		for(Boid other: boidList){
-			if(other != this){
-				if(distanceToObject(other) < Parameters.boidLookRange){
-					ret.add(other);
-				}
-			}
-		}
-		return ret;
-	}
 
 	public HashSet<Boid> recursiveNeighbors(ArrayList<Boid> boidList, HashSet<Boid> set){
 		if(set == null){
