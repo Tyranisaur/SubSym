@@ -8,39 +8,40 @@ public class Genotype {
 
 	private byte[] sequence;
 	private int bits;
+	public double fitness;
 	
-	protected Genotype(){
-		
-	}
-	public Genotype(int bits){
+	public Genotype(){
+		this.bits = Parameters.length;
 		int bytes = bits/8;
 		if(bits % 8 != 0){
 			bytes++;
 		}
-		this.bits = bits;
 		sequence = new byte[bytes];
-		for(int i = 0; i < bytes; i++){
-			sequence[i] = (byte) random.nextInt(256);
-		}
+		random.nextBytes(sequence);
 	}
 	
 	public String toString(){
 		String st = "";
+		String tot = "";
 		for(int i = 0; i < sequence.length; i++){
-			st += Integer.toBinaryString(sequence[i]);
+			st = Integer.toBinaryString(sequence[i] & 255);
+			while(st.length()% 8 != 0){
+				st = "0" + st;
+			}
+			tot += st;
 			
 		}
 		String ret = "";
 		for(int i = 0; i < bits; i++){
-			ret+= st.charAt(i);
+			ret+= tot.charAt(i);
 		}
 		return ret;
 	}
 	
-	public Genotype crossOver(Genotype other, double p){
-		Genotype child = new Genotype(bits);
+	public Genotype crossOver(Genotype other){
+		Genotype child = new Genotype();
 		int fraction = (int) (sequence.length*Math.random());
-		if( p > Math.random()){
+		if( Parameters.crossOverRate > Math.random()){
 			fraction = 0;
 		}
 		for(int i = 0; i < fraction; i++){
@@ -51,17 +52,17 @@ public class Genotype {
 		}
 		return child;
 	}
-	public Genotype mutate(double p){
-		Genotype child = new Genotype(bits);
+	public Genotype mutate(){
+		Genotype child = new Genotype();
 		int bitvalue;
 		for(int i = 0; i < sequence.length; i++){
 			child.sequence[i] = sequence[i];
 			bitvalue = 1;
 			for(int j = 0; j < 8; j++){
-				if(random.nextDouble() < p){
-					child.sequence[i] = (byte) (child.sequence[i] ^ (byte) bitvalue);
+				if(random.nextDouble() < Parameters.mutationRate){
+					child.sequence[i] = (byte) ((byte)child.sequence[i] ^  (byte)bitvalue);
 				}
-				bitvalue = bitvalue << 2;
+				bitvalue = bitvalue << 1;
 			}
 		}
 		return child;

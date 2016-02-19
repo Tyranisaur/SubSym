@@ -1,5 +1,5 @@
 package logic;
 
 public enum Problem {
-	ONEMAX, LOLZ, SURPSEQ;
+	ONEMAX, LOLZ, LOCALSEQ, GLOBALSEQ;
 }

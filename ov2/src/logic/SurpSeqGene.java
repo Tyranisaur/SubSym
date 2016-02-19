@@ -5,37 +5,39 @@ import java.util.ArrayList;
 public class SurpSeqGene extends Genotype {
 
 	private byte[] sequence;
-	int symbols;
 	
 	
-	public SurpSeqGene(int length, int symbols) {
-		this.symbols = symbols;
-		sequence = new byte[length];
-		for(int i = 0; i < length; i++){
-			sequence[i] = (byte) random.nextInt(symbols);
+	public SurpSeqGene() {
+		sequence = new byte[Parameters.length];
+		for(int i = 0; i < sequence.length; i++){
+			sequence[i] = (byte) random.nextInt(Parameters.symbols);
 		}
 	}
 	
-	public SurpSeqGene mutate(double p){
-		SurpSeqGene child = new SurpSeqGene(sequence.length, symbols);
+	public Genotype mutate(){
+		SurpSeqGene child = new SurpSeqGene();
 		for(int i = 0; i < sequence.length; i++){
 			child.sequence[i] = sequence[i];
-			if(random.nextDouble() < p){
-				child.sequence[i] = (byte) random.nextInt(symbols);
+			if(random.nextDouble() < Parameters.mutationRate){
+				child.sequence[i] = (byte) random.nextInt(Parameters.symbols);
 			}
 		}
 		return child;
 	}
-	public ArrayList<Integer> getSequence(){
-		ArrayList<Integer> ret = new ArrayList<Integer>();
+	public ArrayList<Character> getSequence(){
+		ArrayList<Character> ret = new ArrayList<Character>();
 		for(int i = 0; i < sequence.length; i++){
-			ret.add((int) sequence[i]);
+			ret.add((char) sequence[i]);
 		}
 		return ret;
 	}
 	
 	public String toString(){
-		return sequence.toString();
+		String ret = "" + sequence[0];
+		for(int i = 1; i < sequence.length; i++){
+			ret += ", " + sequence[i];
+		}
+		return ret;
 	}
 
 }
