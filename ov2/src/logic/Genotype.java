@@ -6,7 +6,7 @@ public class Genotype {
 	
 	static Random random = new Random();
 
-	private byte[] sequence;
+	protected byte[] sequence;
 	private int bits;
 	public double fitness;
 	

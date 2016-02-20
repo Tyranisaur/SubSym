@@ -3,8 +3,6 @@ package logic;
 import java.util.ArrayList;
 
 public class SurpSeqGene extends Genotype {
-
-	private byte[] sequence;
 	
 	
 	public SurpSeqGene() {
@@ -13,9 +11,25 @@ public class SurpSeqGene extends Genotype {
 			sequence[i] = (byte) random.nextInt(Parameters.symbols);
 		}
 	}
-	
+	@Override
+	public Genotype crossOver(Genotype other){
+		Genotype child = new SurpSeqGene();
+		child.sequence = new byte[Parameters.length];
+		int fraction = (int) (sequence.length*Math.random());
+		if( Parameters.crossOverRate > Math.random()){
+			fraction = 0;
+		}
+		for(int i = 0; i < fraction; i++){
+			child.sequence[i] = sequence[i];
+		}
+		for(int i = fraction; i < sequence.length; i++){
+			child.sequence[i] = other.sequence[i];
+		}
+		return child;
+	}
 	public Genotype mutate(){
 		SurpSeqGene child = new SurpSeqGene();
+		child.sequence = new byte[Parameters.length];
 		for(int i = 0; i < sequence.length; i++){
 			child.sequence[i] = sequence[i];
 			if(random.nextDouble() < Parameters.mutationRate){

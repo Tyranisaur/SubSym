@@ -176,19 +176,25 @@ public class EA {
 			collector = 0.0;
 			for(int i = 0; i < sigmaValues.length; i++){
 				collector += sigmaValues[i];
-				if(collector > value){
+				if(collector >= value){
 					mother = adultList.get(i);
 					break;
 				}
+			}
+			if(mother == null){
+				mother = adultList.get(adultList.size() - 1);
 			}
 			value = random.nextDouble() * total;
 			collector = 0.0;
 			for(int i = 0; i < sigmaValues.length; i++){
 				collector += sigmaValues[i];
-				if(collector > value){
+				if(collector >= value){
 					father = adultList.get(i);
 					break;
 				}
+			}
+			if(father == null){
+				father = adultList.get(adultList.size() - 1);
 			}
 			child = mother.crossOver(father);
 			childList.add(child.mutate());
@@ -212,19 +218,25 @@ public class EA {
 			collector = 0.0;
 			for(int i = 0; i < values.length; i++){
 				collector += values[i];
-				if(collector > value){
+				if(collector >= value){
 					mother = adultList.get(i);
 					break;
 				}
+			}
+			if(mother == null){
+				mother = adultList.get(adultList.size() - 1);
 			}
 			value = random.nextDouble() * total;
 			collector = 0.0;
 			for(int i = 0; i < values.length; i++){
 				collector += values[i];
-				if(collector > value){
+				if(collector >= value){
 					father = adultList.get(i);
 					break;
 				}
+			}
+			if(father == null){
+				father = adultList.get(adultList.size() - 1);
 			}
 			child = mother.crossOver(father);
 			childList.add(child.mutate());
