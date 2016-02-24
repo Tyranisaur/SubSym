@@ -177,12 +177,14 @@ public class BoidArea extends JPanel implements Runnable, PropertyChangeListener
 	@Override
 	public void run() {
 		while(true){
+			/*
 			try {
 				Thread.sleep(5);
 			}
 			catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			*/
 			for(Boid boid: boidList){
 				boid.tick(boidList, predatorList, obstacleList);
 			}
