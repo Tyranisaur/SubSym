@@ -40,8 +40,8 @@ public class Genotype {
 	
 	public Genotype crossOver(Genotype other){
 		Genotype child = new Genotype();
-		int fraction = (int) (sequence.length*Math.random());
-		if( Parameters.crossOverRate > Math.random()){
+		int fraction = 1 + (random.nextInt(sequence.length - 1));
+		if( Parameters.crossOverRate < Math.random()){
 			fraction = 0;
 		}
 		for(int i = 0; i < fraction; i++){

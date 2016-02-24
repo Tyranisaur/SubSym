@@ -65,6 +65,9 @@ public class MainPanel extends JPanel implements ActionListener, ChangeListener,
 	private JTextField tournamentPValue;
 
 	private JCheckBox survivalCheckBox;
+	
+	private Thread thread;
+	EA ea;
 
 	public MainPanel(){
 		super();
@@ -140,7 +143,7 @@ public class MainPanel extends JPanel implements ActionListener, ChangeListener,
 		crossOverField.setEditable(true);
 		gbc.gridx = 2;
 		add(crossOverField, gbc);
-		crossOverField.setText("0.2");
+		crossOverField.setText("0.5");
 
 		JLabel mutationLabel = new JLabel("Mutation probablity");
 		gbc.gridx = 1;
@@ -151,7 +154,7 @@ public class MainPanel extends JPanel implements ActionListener, ChangeListener,
 		mutationField.setEditable(true);
 		gbc.gridx = 2;
 		add(mutationField, gbc);
-		mutationField.setText("0.05");
+		mutationField.setText(Double.toString(1./(int)lengthSpinner.getValue()));
 
 		JLabel birthLabel = new JLabel("Birth rate");
 		gbc.gridx = 0;
@@ -254,7 +257,11 @@ public class MainPanel extends JPanel implements ActionListener, ChangeListener,
 			}
 		}
 		if(e.getSource() == startButton){
-
+			if(ea != null && ea.running){
+				ea.stop();
+				startButton.setText("Start");
+				return;
+			}
 
 			Parameters.birthRate = (int) birthSpinner.getValue();
 			Parameters.adults = (int) adultsSpinner.getValue();
@@ -279,8 +286,17 @@ public class MainPanel extends JPanel implements ActionListener, ChangeListener,
 			
 
 			//TODO execution
-			EA ea = new EA();
-			ea.run();
+			ea = new EA();
+			
+			
+			thread = new Thread(){
+				public void run(){
+					startButton.setText("Stop");
+					ea.run();
+					startButton.setText("Start");
+				}
+			};
+			thread.start();
 
 		}
 
@@ -293,16 +309,21 @@ public class MainPanel extends JPanel implements ActionListener, ChangeListener,
 		int value;
 		if(e.getSource() == lengthSpinner){
 			value = (int) lengthSpinner.getValue();
+			if(value < 0){
+				lengthSpinner.setValue(0);
+				return;
+			}
 			if(oneMaxTarget.getText().length() > value){
 				oneMaxTarget.setText(oneMaxTarget.getText().substring(0, value));
 			}
-			else if(oneMaxTarget.getText().length() < value){
+			else  if(oneMaxTarget.getText().length() > value){
 				oneMaxTarget.setText("");
 			}
 
 			if(value < (int)lolzCapSpinner.getValue()){
 				lolzCapSpinner.setValue(value);
 			}
+			mutationField.setText(Double.toString(1./value));
 		}
 		if(e.getSource() == lolzCapSpinner){
 			value = (int) lolzCapSpinner.getValue();

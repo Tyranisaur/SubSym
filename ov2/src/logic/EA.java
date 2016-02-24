@@ -14,7 +14,9 @@ public class EA {
 	Random random;
 	double std;
 	double averageScore;
+	double totalScore;
 	GenoTypeComparator comp;
+	public boolean running;
 	
 	public EA(){
 		comp = new GenoTypeComparator();
@@ -33,12 +35,17 @@ public class EA {
 			Fitness.function(adultList.get(i));
 		}
 	}
+	public void stop(){
+		running = false;
+	}
 	
 	public void run(){
+		running = true;
 		
-		while(true){
+		while(running){
 			
 			log();
+			
 			if(bestScore == 1.0){
 				break;
 			}
@@ -47,6 +54,7 @@ public class EA {
 			
 			generation++;
 		}
+		running = false;
 	}
 	
 	private void selectAdults() {
@@ -125,7 +133,7 @@ public class EA {
 					bestScore = array[i].fitness;
 				}
 			}
-			if(random.nextDouble() < Parameters.tournamentPValue){
+			if(random.nextDouble() > Parameters.tournamentPValue){
 				mother = array[indexOfBest];
 			}
 			else{
@@ -146,7 +154,7 @@ public class EA {
 					bestScore = array[i].fitness;
 				}
 			}
-			if(random.nextDouble() < Parameters.tournamentPValue){
+			if(random.nextDouble() > Parameters.tournamentPValue){
 				father = array[indexOfBest];
 			}
 			else{
@@ -165,13 +173,15 @@ public class EA {
 		double[] sigmaValues = new double[adultList.size()];
 		double total = 0.0;
 		for(int i = 0; i < sigmaValues.length; i++){
-			sigmaValues[i] = 1. + (adultList.get(i).fitness - averageScore)/(2*std);
+			sigmaValues[i] = 1.0 + (adultList.get(i).fitness - averageScore) / ( 2* std);
 			total += sigmaValues[i];
 		}
 		Genotype mother = null, father = null, child;
 		double value;
 		double collector;
 		while(childList.size() < Parameters.birthRate){
+			mother = null; 
+			father = null;
 			value = random.nextDouble() * total;
 			collector = 0.0;
 			for(int i = 0; i < sigmaValues.length; i++){
@@ -205,16 +215,16 @@ public class EA {
 
 	private void fitnessScaling() {
 		double[] values = new double[adultList.size()];
-		double total = 0.0;
 		for(int i = 0; i < values.length; i++){
-			values[i] = adultList.get(i).fitness/averageScore;
-			total += values[i];
+			values[i] = adultList.get(i).fitness/totalScore;
 		}
 		Genotype mother = null, father = null, child;
 		double value;
 		double collector;
 		while(childList.size() < Parameters.birthRate){
-			value = random.nextDouble() * total;
+			mother = null;
+			father = null;
+			value = random.nextDouble();
 			collector = 0.0;
 			for(int i = 0; i < values.length; i++){
 				collector += values[i];
@@ -226,7 +236,7 @@ public class EA {
 			if(mother == null){
 				mother = adultList.get(adultList.size() - 1);
 			}
-			value = random.nextDouble() * total;
+			value = random.nextDouble();
 			collector = 0.0;
 			for(int i = 0; i < values.length; i++){
 				collector += values[i];
@@ -246,17 +256,18 @@ public class EA {
 	private void log(){
 		Genotype best = null;
 		averageScore = 0.0;
+		totalScore = 0.0;
 		bestScore = 0.0;
 		std = 0.0;
 		for(int i = 0; i < adultList.size(); i++){
 			scores[i] = adultList.get(i).fitness;
-			averageScore += scores[i];
+			totalScore += scores[i];
 			if(scores[i] >= bestScore){
 				bestScore = scores[i];
 				best = adultList.get(i);
 			}
 		}
-		averageScore /= adultList.size();
+		averageScore = totalScore / adultList.size();
 		for(int i = 0; i < scores.length; i++){
 			std += Math.pow(scores[i] - averageScore, 2);
 		}
