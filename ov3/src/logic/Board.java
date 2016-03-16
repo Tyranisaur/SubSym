@@ -57,21 +57,21 @@ public class Board {
 		case DOWN:
 			ret[0] = board[y * 10 + (x + 1) % 10];
 			ret[1] = board[ (y + 1) % 10 * 10 + x ];
-			ret[2] = board[y * 10 + (x - 1) % 10];
+			ret[2] = board[y * 10 + Math.floorMod((x - 1) , 10)];
 			break;
 		case LEFT:
 			ret[0] = board[ (y + 1) % 10 * 10 + x ];
-			ret[1] = board[y * 10 + (x - 1) % 10];
-			ret[2] = board[ (y - 1) % 10 * 10 + x];
+			ret[1] = board[y * 10 + Math.floorMod((x - 1) , 10)];
+			ret[2] = board[ Math.floorMod((y - 1) , 10) * 10 + x];
 			break;
 		case RIGHT:
-			ret[0] = board[ (y - 1) % 10 * 10 + x];
+			ret[0] = board[ Math.floorMod((y - 1) , 10) * 10 + x];
 			ret[1] = board[y * 10 + (x + 1) % 10];
 			ret[2] = board[ (y + 1) % 10 * 10 + x ];
 			break;
 		case UP:
-			ret[0] = board[y * 10 + (x - 1) % 10];
-			ret[1] = board[ (y - 1) % 10 * 10 + x];
+			ret[0] = board[y * 10 + Math.floorMod((x - 1) , 10)];
+			ret[1] = board[ Math.floorMod((y - 1) , 10) * 10 + x];
 			ret[2] = board[y * 10 + (x + 1) % 10];
 			break;
 		default:
@@ -82,7 +82,8 @@ public class Board {
 	}
 	
 	/**
-	 * Moves the player in the given direction and returns the type of the cell moved into
+	 * The player moves in the given direction.
+	 * The direction is relative to the player's orientation.
 	 * @param 
 	 * @return CellType cell
 	 */
@@ -90,26 +91,72 @@ public class Board {
 		int x = playerIndex % 10;
 		int y = playerIndex / 10;
 		
-		switch(d){
+		switch(playerDirection){
 		case DOWN:
-			y = (y + 1) % 10;
+			if(d == Direction.LEFT){
+				x = (x + 1) % 10;
+				playerDirection = Direction.RIGHT;
+			}
+			else if(d == Direction.UP){
+				y = (y + 1) % 10;
+				playerDirection = Direction.DOWN;
+			}
+			else if(d == Direction.RIGHT){
+				x = Math.floorMod((x - 1) , 10);
+				playerDirection = Direction.LEFT;
+			}
 			break;
 		case LEFT:
-			x = (x - 1) % 10;
+			if(d == Direction.LEFT){
+				y = (y + 1) % 10;
+				playerDirection = Direction.DOWN;
+			}
+			else if(d == Direction.UP){
+				x = Math.floorMod((x - 1) , 10);
+				playerDirection = Direction.LEFT;
+			}
+			else if(d == Direction.RIGHT){
+				y = Math.floorMod((y - 1) , 10);
+				playerDirection = Direction.UP;
+			}
 			break;
 		case RIGHT:
-			x = (x + 1) % 10;
+			if(d == Direction.LEFT){
+				y = Math.floorMod((y - 1) , 10);
+				playerDirection = Direction.UP;
+			}
+			else if(d == Direction.UP){
+				x = (x + 1) % 10;
+				playerDirection = Direction.RIGHT;
+			}
+			else if(d == Direction.RIGHT){
+				y = (y + 1) % 10;
+				playerDirection = Direction.DOWN;
+			}
 			break;
 		case UP:
-			x = (x - 1) % 10;
+			if(d == Direction.LEFT){
+				x = Math.floorMod((x - 1) , 10);
+				playerDirection = Direction.LEFT;
+			}
+			else if(d == Direction.UP){
+				y = Math.floorMod((y - 1) , 10);
+				playerDirection = Direction.UP;
+			}
+			else if(d == Direction.RIGHT){
+				x = (x + 1) % 10;
+				playerDirection = Direction.RIGHT;
+			}
 			break;
 		default:
 			break;
 		
 		}
-		playerDirection = d;
 		int newIndex = y * 10 + x;
 		CellType ret = board[newIndex];
+		if(d == Direction.NONE){
+			ret = CellType.EMPTY;
+		}
 		board[playerIndex] = CellType.EMPTY;
 		board[newIndex] = CellType.PLAYER;
 		playerIndex = newIndex;
@@ -119,19 +166,17 @@ public class Board {
 
 	
 	public Board clone(){
-		Board ret = null;
-		try {
-			ret = (Board) super.clone();
-		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Board ret = new Board();
+		ret.playerDirection = playerDirection;
+		ret.playerIndex = playerIndex;
 		ret.board = board.clone();
 		return ret;
 	}
+	
 	public CellType getCell(int index){
 		return board[index];
 	}
+	
 	public Direction getPlayerDirection(){
 		return playerDirection;
 	}
