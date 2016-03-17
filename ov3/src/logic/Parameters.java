@@ -8,7 +8,7 @@ public class Parameters {
 	public static double crossOverRate = .05;
 	public static double mutationRate = 0.02;
 	public static int adults = 300;
-	public static double treshhold = 0.3;
+	public static double treshhold = 0.2;
 	public static int stepsPerGeneration = 60;
 	public static boolean dynamicBoard = false;
 

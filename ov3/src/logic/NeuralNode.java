@@ -27,9 +27,9 @@ public class NeuralNode {
 			if(inputNodes[i].value < 0.0){
 				inputNodes[i].activation();
 			}
-			value += inputNodes[i].value * weights[i];
+			value += inputNodes[i].value * weights[i]/256.;
 		}
-		value /= weightSum;
+		value /= weights.length;
 
 		return value > Parameters.treshhold;
 	}
