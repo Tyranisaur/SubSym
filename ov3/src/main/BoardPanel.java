@@ -9,8 +9,11 @@ import java.io.File;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+
 import logic.Board;
 import logic.CellType;
+import logic.Direction;
+import logic.Fitness;
 
 public class BoardPanel extends JPanel {
 
@@ -91,6 +94,18 @@ public class BoardPanel extends JPanel {
 			y = (i / 10) * image.getHeight();
 			g.drawImage(image, x, y, null);
 		}
+	}
+
+
+	public void play() throws InterruptedException {
+		Direction[] moves = Fitness.getMoves();
+		
+		for(Direction move: moves){
+			Thread.sleep(1000);
+			board.move(move);
+			repaint();
+		}
+		
 	}
 
 }

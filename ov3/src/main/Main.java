@@ -12,7 +12,7 @@ import logic.Fitness;
 
 public class Main {
 
-	public static void main(String[] args){
+	public static void main(String[] args) throws InterruptedException{
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}
@@ -39,6 +39,8 @@ public class Main {
 		frame.setContentPane(panel);
 		frame.pack();
 		frame.setVisible(true);
+		
+		panel.play();
 		
 		
 	}

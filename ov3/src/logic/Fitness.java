@@ -39,19 +39,19 @@ public class Fitness {
 		Direction move;
 		network = new NeuralNetwork(gene);
 		double value = 0.0;
-		for(int step = 0; step < 60; step++){
+		for(int step = 0; step < Parameters.stepsPerGeneration; step++){
 			sensorData = activeBoard.sensorInput();
 			move = network.caluculateMove(sensorData);
-			System.out.println(""+ step + "\t" + move);
+			//System.out.println(""+ step + "\t" + move);
 			output = activeBoard.move(move);
 			if(output == CellType.FOOD){
-				value += 1./60;
+				value += 6.0;
 			}
 			else if(output == CellType.POISON){
-				value -= 1./60;
+				value -= 18.0;
 			}
 			else if(output == CellType.EMPTY){
-				value -= 1./200;
+				value -= 1.0;
 			}
 			
 		}
@@ -59,7 +59,12 @@ public class Fitness {
 	
 	}
 	
-
+	public static void doneTesting(){
+		if(Parameters.dynamicBoard || Parameters.newVisualizationScenario){
+			defaultBoard = new Board();
+		}
+	}
+	
 	public static void nextGeneration() {
 		if(Parameters.dynamicBoard){
 			defaultBoard = new Board();

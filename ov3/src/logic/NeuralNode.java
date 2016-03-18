@@ -1,18 +1,20 @@
 package logic;
 
+import java.util.Arrays;
+
 public class NeuralNode {
 
 	private double value;
-	private int[] weights;
+	private double[] weights;
 	private NeuralNode[] inputNodes;
-	private int weightSum;
+	private double weightSum;
 
-	public NeuralNode(int[] weights, NeuralNode[] inputNodes){
-		value = -1.0;
-		this.weights = weights;
-		this.inputNodes = inputNodes;
-		weightSum = 0;
+	public NeuralNode(double[] weights, NeuralNode[] inputNodes){
+		weightSum = 0.0;
 		if(weights != null){
+			value = -10.0;
+			this.weights = weights.clone();
+			this.inputNodes = inputNodes;
 			for(int i = 0; i < weights.length; i++){
 				weightSum += weights[i];
 			}
@@ -21,16 +23,19 @@ public class NeuralNode {
 	public void setValue(double v){
 		value = v;
 	}
-	public boolean activation(){
+	public double getValue(){
+		return value;
+	}
+	public void activation(){
 		value = 0.0;
 		for(int i = 0; i < weights.length; i++){
-			if(inputNodes[i].value < 0.0){
+			if(inputNodes[i].value < -9.0){
 				inputNodes[i].activation();
 			}
-			value += inputNodes[i].value * weights[i]/256.;
+			value += inputNodes[i].value * weights[i];
+			
 		}
 		value /= weights.length;
-
-		return value > Parameters.treshhold;
+		value = Math.sin(value * Math.PI/2.0);
 	}
 }

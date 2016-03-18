@@ -15,10 +15,10 @@ public class Genotype {
 		random.nextBytes(sequence);
 	}
 
-	public int[] getWeights(){
-		int[] ret = new int[sequence.length];
+	public double[] getWeights(){
+		double[] ret = new double[sequence.length];
 		for(int i = 0; i < sequence.length; i++){
-			ret[i] = sequence[i] & 255;
+			ret[i] = (sequence[i]) / 128.0;
 		}
 		return ret;
 	}
@@ -37,7 +37,7 @@ public class Genotype {
 		}
 		return child;
 	}
-	/*
+	
 	public Genotype mutate(){
 		Genotype child = new Genotype();
 		for(int i = 0; i < sequence.length; i++){
@@ -53,7 +53,9 @@ public class Genotype {
 		return child;
 
 	}
-	*/
+	
+	
+	/*
 	public Genotype mutate(){
 		Genotype child = new Genotype();
 		int bitvalue;
@@ -71,4 +73,5 @@ public class Genotype {
 		
 	}
 
+	*/
 }

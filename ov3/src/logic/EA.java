@@ -39,14 +39,11 @@ public class EA {
 	public void run(){
 		running = true;
 
-		while(running && generation < 60){
+		while(running && generation < Parameters.generationsPerRun){
 			Fitness.nextGeneration();
 
 			log();
 
-			if(bestScore == 1.0){
-				break;
-			}
 			sigmaScaling();
 			selectAdults();
 
@@ -139,6 +136,7 @@ public class EA {
 			if(scores[i] >= bestScore){
 				bestScore = scores[i];
 				best = adultList.get(i);
+				Fitness.setBest(best);
 			}
 		}
 		averageScore = totalScore / adultList.size();
