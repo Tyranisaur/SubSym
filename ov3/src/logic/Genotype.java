@@ -37,16 +37,17 @@ public class Genotype {
 		}
 		return child;
 	}
-	
+	/*
+
 	public Genotype mutate(){
 		Genotype child = new Genotype();
 		for(int i = 0; i < sequence.length; i++){
 			if(random.nextDouble() < Parameters.mutationRate){
 				if(random.nextBoolean()){
-					child.sequence[i] = (byte) (sequence[i] + random.nextInt(100) + 1);
+					child.sequence[i] = (byte) (sequence[i] + random.nextInt(50) + 1);
 				}
 				else{
-					child.sequence[i] = (byte) (sequence[i] - random.nextInt(100) - 1);
+					child.sequence[i] = (byte) (sequence[i] - random.nextInt(50) - 1);
 				}
 			}
 		}
@@ -54,8 +55,8 @@ public class Genotype {
 
 	}
 	
+	*/
 	
-	/*
 	public Genotype mutate(){
 		Genotype child = new Genotype();
 		int bitvalue;
@@ -73,5 +74,5 @@ public class Genotype {
 		
 	}
 
-	*/
+	
 }

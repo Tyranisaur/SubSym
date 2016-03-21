@@ -36,6 +36,10 @@ public class Board {
 			board[playerIndex] = CellType.PLAYER;
 		}
 	}
+	public int getPlayerIndex(){
+		return playerIndex;
+	}
+	
 	/**
 	 * Sensor data represented as an array
 	 * Array has three elements

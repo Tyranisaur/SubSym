@@ -1,23 +1,17 @@
 package logic;
 
-import java.util.Arrays;
-
 public class NeuralNode {
 
 	private double value;
 	private double[] weights;
 	private NeuralNode[] inputNodes;
-	private double weightSum;
 
 	public NeuralNode(double[] weights, NeuralNode[] inputNodes){
-		weightSum = 0.0;
 		if(weights != null){
 			value = -10.0;
 			this.weights = weights.clone();
 			this.inputNodes = inputNodes;
-			for(int i = 0; i < weights.length; i++){
-				weightSum += weights[i];
-			}
+			
 		}
 	}
 	public void setValue(double v){
@@ -36,6 +30,6 @@ public class NeuralNode {
 			
 		}
 		value /= weights.length;
-		value = Math.sin(value * Math.PI/2.0);
+		value = Math.abs(value) >= 0.5 ? Math.signum(value) : Math.sin(value * Math.PI);
 	}
 }

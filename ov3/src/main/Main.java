@@ -3,6 +3,7 @@ package main;
 import java.awt.Dimension;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -28,10 +29,14 @@ public class Main {
 		catch (UnsupportedLookAndFeelException ex) {
 			
 		}
+		Fitness.init();
 		EA ea = new EA();
 		ea.run();
-		BoardPanel panel = new BoardPanel(Fitness.getBoard());
-		panel.setPreferredSize(new Dimension(320, 320));
+		JPanel panel = new JPanel();
+		BoardPanel boardPanel = new BoardPanel(Fitness.getBoard(0));
+		boardPanel.setPreferredSize(new Dimension(320, 320));
+		panel.add(boardPanel);
+		panel.add(new SettingsPanel(boardPanel));
 		
 		JFrame frame = new JFrame();
 		frame.setTitle("Flatland");
@@ -40,7 +45,6 @@ public class Main {
 		frame.pack();
 		frame.setVisible(true);
 		
-		panel.play();
 		
 		
 	}

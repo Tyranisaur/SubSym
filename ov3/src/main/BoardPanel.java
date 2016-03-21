@@ -1,8 +1,6 @@
 package main;
 
 import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
@@ -14,6 +12,7 @@ import logic.Board;
 import logic.CellType;
 import logic.Direction;
 import logic.Fitness;
+import logic.Parameters;
 
 public class BoardPanel extends JPanel {
 
@@ -30,9 +29,13 @@ public class BoardPanel extends JPanel {
 	BufferedImage downImage;
 	BufferedImage leftImage;
 	BufferedImage rightImage;
+	Direction[] moves;
+	int doneSteps;
+	int boardIndex;
 	
 	public BoardPanel(Board board){
 		super();
+		boardIndex = 0;
 		this.board = board;
 		try{
 			emptyImage = ImageIO.read(new File(".\\.\\resources\\images\\empty.png"));
@@ -46,6 +49,7 @@ public class BoardPanel extends JPanel {
 		catch(Exception e){
 			e.printStackTrace();
 		}
+		doneSteps = 0;
 	}
 
 	
@@ -95,16 +99,64 @@ public class BoardPanel extends JPanel {
 			g.drawImage(image, x, y, null);
 		}
 	}
-
-
-	public void play() throws InterruptedException {
-		Direction[] moves = Fitness.getMoves();
-		
-		for(Direction move: moves){
-			Thread.sleep(1000);
-			board.move(move);
+	public void step(){
+		if(moves == null){
+			moves = Fitness.getMoves(boardIndex);
+		}
+		board.move(moves[doneSteps]);
+		repaint();
+		doneSteps++;
+		if(doneSteps == Parameters.stepsPerGeneration){
+			doneSteps = 0;
+			moves = null;
+			try {
+				Thread.sleep(5000);
+			}
+			catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			board = Fitness.getBoard(boardIndex);
 			repaint();
 		}
+		
+	}
+	
+	public void setBoard(Board b){
+		board = b;
+		moves = null;
+		doneSteps = 0;
+	}
+
+
+	public void play() {
+		if(moves == null){
+			moves = Fitness.getMoves(boardIndex);
+			doneSteps = 0;
+		}
+		
+		for(int i = doneSteps; i < Parameters.stepsPerGeneration; i++){
+			try {
+				Thread.sleep(Parameters.millisPerVisualiztionStep);
+			}
+			catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			board.move(moves[i]);
+			repaint();
+		}
+		try {
+			Thread.sleep(5000);
+		}
+		catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		board = Fitness.getBoard(boardIndex);
+		repaint();
+		moves = null;
+		doneSteps = 0;
 		
 	}
 

@@ -9,27 +9,32 @@ public class NeuralNetwork {
 
 	public NeuralNetwork(Genotype gene){
 		inputLayer = new NeuralNode[6];
-		layer1 = new NeuralNode[6];
-		layer2 = new NeuralNode[6];
+		layer1 = new NeuralNode[5];
+		//layer2 = new NeuralNode[9];
 		outputLayer = new NeuralNode[3];
 		double[] weightList = gene.getWeights();
-		double[] longlist = new double[6];
+		double[] longlist = new double[5];
 		double[] sublist = new double[6];
 		for(int i = 0; i < inputLayer.length; i++){
 			inputLayer[i] = new NeuralNode(null, null);
 		}
-		for(int i = 0; i < 6; i++){
-			System.arraycopy(weightList, i * 6, longlist, 0, 6);
-			layer1[i] = new NeuralNode(longlist, inputLayer);
+		for(int i = 0; i < layer1.length; i++){
+			System.arraycopy(weightList, i * inputLayer.length, sublist, 0, inputLayer.length);
+			layer1[i] = new NeuralNode(sublist, inputLayer);
 		}
-
-		for(int i = 0; i < 6; i++){
-			System.arraycopy(weightList, i * 6 + 36, sublist, 0, 6);
-			layer2[i] = new NeuralNode(sublist, layer1);
+/*
+		for(int i = 0; i < layer2.length; i++){
+			System.arraycopy(weightList, i * layer1.length + inputLayer.length * layer1.length, longlist, 0, layer1.length);
+			layer2[i] = new NeuralNode(longlist, layer1);
 		}
-		for(int i = 0; i < 3; i++){
-			System.arraycopy(weightList, i * 6 + 72, sublist, 0, 6);
-			outputLayer[i] = new NeuralNode(sublist, layer2);
+		for(int i = 0; i < outputLayer.length; i++){
+			System.arraycopy(weightList, i * layer2.length + inputLayer.length * layer1.length + layer1.length * layer2.length, longlist, 0, layer2.length);
+			outputLayer[i] = new NeuralNode(longlist, layer1);
+		}
+ */	
+		for(int i = 0; i < outputLayer.length; i++){
+			System.arraycopy(weightList, i * layer1.length + inputLayer.length * layer1.length, longlist, 0, layer1.length);
+			outputLayer[i] = new NeuralNode(longlist, layer1);
 		}
 	}
 
@@ -75,8 +80,12 @@ public class NeuralNetwork {
 		}
 		for(int i = 0; i < layer1.length; i++){
 			layer1[i].setValue(-10.0);
+		}
+		/*
+		for(int i = 0; i < layer2.length; i++){			
 			layer2[i].setValue(-10.0);
 		}
+		*/
 		for(int i = 0; i < outputLayer.length; i++){
 			outputLayer[i].setValue(-10.0);
 		}
