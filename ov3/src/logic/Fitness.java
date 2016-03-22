@@ -51,10 +51,10 @@ public class Fitness {
 				move = network.caluculateMove(sensorData);
 				output = activeBoard.move(move);
 				if(output == CellType.FOOD){
-					value += 1.0;
+					value += 2.0;
 				}
 				else if(output == CellType.POISON){
-					value -= 2.5;
+					value -= 4.0;
 				}
 				else if(output == CellType.EMPTY){
 					value -= 0.25;
@@ -63,7 +63,7 @@ public class Fitness {
 			}
 		}
 
-		gene.fitness = Math.max(0.0, value/Parameters.scanarios);
+		gene.fitness = value/Parameters.scanarios;
 
 	}
 

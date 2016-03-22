@@ -1,6 +1,7 @@
 package logic;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
 
 public class EA {
@@ -44,7 +45,7 @@ public class EA {
 			Fitness.nextGeneration();
 			log();
 
-			fitnessScaling();
+			tournamentSelection();
 			selectAdults();
 
 			generation++;
@@ -75,7 +76,62 @@ public class EA {
 	}
 
 
-
+	private void tournamentSelection() {
+		HashSet<Genotype> group = new HashSet<Genotype>();
+		Genotype[] array = new Genotype[Parameters.tournamentSize];
+		Genotype mother;
+		Genotype father;
+		Genotype child;
+		int indexOfBest;
+		double bestScore;
+		while(childList.size() < Parameters.adults){
+			while(group.size() < Parameters.tournamentSize){
+				group.add(adultList.get(random.nextInt(adultList.size())));
+			}
+			group.toArray(array);
+			indexOfBest = 0;
+			bestScore = 0.0;
+			for(int i = 0; i < array.length; i++){
+				if(array[i].fitness > bestScore){
+					indexOfBest = i;
+					bestScore = array[i].fitness;
+				}
+			}
+			if(random.nextDouble() > Parameters.tournamentPValue){
+				mother = array[indexOfBest];
+			}
+			else{
+				int randomIndex = random.nextInt(array.length - 1);
+				mother = array[ randomIndex >= indexOfBest ? randomIndex + 1 : randomIndex];
+			}
+			group.clear();
+			while(group.size() < Parameters.tournamentSize){
+				group.add(adultList.get(random.nextInt(adultList.size())));
+			
+			}
+			group.toArray(array);
+			indexOfBest = 0;
+			bestScore = 0.0;
+			for(int i = 0; i < array.length; i++){
+				if(array[i].fitness > bestScore){
+					indexOfBest = i;
+					bestScore = array[i].fitness;
+				}
+			}
+			if(random.nextDouble() > Parameters.tournamentPValue){
+				father = array[indexOfBest];
+			}
+			else{
+				int randomIndex = random.nextInt(array.length - 1);
+				father = array[ randomIndex >= indexOfBest ? randomIndex + 1 : randomIndex];
+			}
+			group.clear();
+			child = mother.crossOver(father);
+			childList.add(child.mutate());
+		}
+		
+		
+	}
 	
 	private void fitnessScaling() {
 		double[] values = new double[adultList.size()];
