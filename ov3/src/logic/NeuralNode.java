@@ -3,34 +3,33 @@ package logic;
 public class NeuralNode {
 
 	private double value;
-	private int[] weights;
+	private double[] weights;
 	private NeuralNode[] inputNodes;
-	private int weightSum;
 
-	public NeuralNode(int[] weights, NeuralNode[] inputNodes){
-		value = -1.0;
-		this.weights = weights;
-		this.inputNodes = inputNodes;
-		weightSum = 0;
+	public NeuralNode(double[] weights, NeuralNode[] inputNodes){
 		if(weights != null){
-			for(int i = 0; i < weights.length; i++){
-				weightSum += weights[i];
-			}
+			value = -10.0;
+			this.weights = weights.clone();
+			this.inputNodes = inputNodes;
+			
 		}
 	}
 	public void setValue(double v){
 		value = v;
 	}
-	public boolean activation(){
+	public double getValue(){
+		return value;
+	}
+	public void activation(){
 		value = 0.0;
 		for(int i = 0; i < weights.length; i++){
-			if(inputNodes[i].value < 0.0){
+			if(inputNodes[i].value < -9.0){
 				inputNodes[i].activation();
 			}
-			value += inputNodes[i].value * weights[i]/256.;
+			value += inputNodes[i].value * weights[i];
+			
 		}
 		value /= weights.length;
-
-		return value > Parameters.treshhold;
+		value = Math.abs(value) >= 0.5 ? Math.signum(value) : Math.sin(value * Math.PI);
 	}
 }

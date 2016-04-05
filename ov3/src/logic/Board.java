@@ -13,10 +13,10 @@ public class Board {
 		playerIndex = -1;
 		board = new CellType[100];
 		for(int i = 0; i < 100; i ++){
-			if(random.nextDouble() < 0.33){
+			if(random.nextDouble() < 1./3){
 				board[i] = CellType.FOOD;
 			}
-			else if(random.nextDouble() < 0.33){
+			else if(random.nextDouble() < 1./3){
 				board[i] = CellType.POISON;
 			}
 			else if( playerIndex == -1){
@@ -30,12 +30,16 @@ public class Board {
 		}
 		playerDirection = Direction.UP;
 		
-		//Check this because fuck you
+		//Check this because it's possible for all cells to be food or poison
 		if(playerIndex == -1){
 			playerIndex = random.nextInt(100);
 			board[playerIndex] = CellType.PLAYER;
 		}
 	}
+	public int getPlayerIndex(){
+		return playerIndex;
+	}
+	
 	/**
 	 * Sensor data represented as an array
 	 * Array has three elements
@@ -77,6 +81,16 @@ public class Board {
 		default:
 			break;
 		
+		}
+		return ret;
+	}
+	
+	public int amountOfFood(){
+		int ret = 0;
+		for (CellType cell: board){
+			if(cell == CellType.FOOD){
+				ret++;
+			}
 		}
 		return ret;
 	}

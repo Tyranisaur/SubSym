@@ -1,6 +1,7 @@
 package logic;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
 
 public class EA {
@@ -39,20 +40,18 @@ public class EA {
 	public void run(){
 		running = true;
 
-		while(running && generation < 60){
-			Fitness.nextGeneration();
+		while(running && generation < Parameters.generationsPerRun){
 
+			Fitness.nextGeneration();
 			log();
 
-			if(bestScore == 1.0){
-				break;
-			}
-			sigmaScaling();
+			tournamentSelection();
 			selectAdults();
 
 			generation++;
 		}
 		running = false;
+		Fitness.doneTesting();
 	}
 
 	private void selectAdults() {
@@ -62,7 +61,6 @@ public class EA {
 			tempAdults.add(child);
 		}
 		for(Genotype adult: adultList){
-			Fitness.function(adult);
 			tempAdults.add(adult);
 		}
 		
@@ -78,26 +76,78 @@ public class EA {
 	}
 
 
-
+	private void tournamentSelection() {
+		HashSet<Genotype> group = new HashSet<Genotype>();
+		Genotype[] array = new Genotype[Parameters.tournamentSize];
+		Genotype mother;
+		Genotype father;
+		Genotype child;
+		int indexOfBest;
+		double bestScore;
+		while(childList.size() < Parameters.adults){
+			while(group.size() < Parameters.tournamentSize){
+				group.add(adultList.get(random.nextInt(adultList.size())));
+			}
+			group.toArray(array);
+			indexOfBest = 0;
+			bestScore = 0.0;
+			for(int i = 0; i < array.length; i++){
+				if(array[i].fitness > bestScore){
+					indexOfBest = i;
+					bestScore = array[i].fitness;
+				}
+			}
+			if(random.nextDouble() > Parameters.tournamentPValue){
+				mother = array[indexOfBest];
+			}
+			else{
+				int randomIndex = random.nextInt(array.length - 1);
+				mother = array[ randomIndex >= indexOfBest ? randomIndex + 1 : randomIndex];
+			}
+			group.clear();
+			while(group.size() < Parameters.tournamentSize){
+				group.add(adultList.get(random.nextInt(adultList.size())));
+			
+			}
+			group.toArray(array);
+			indexOfBest = 0;
+			bestScore = 0.0;
+			for(int i = 0; i < array.length; i++){
+				if(array[i].fitness > bestScore){
+					indexOfBest = i;
+					bestScore = array[i].fitness;
+				}
+			}
+			if(random.nextDouble() > Parameters.tournamentPValue){
+				father = array[indexOfBest];
+			}
+			else{
+				int randomIndex = random.nextInt(array.length - 1);
+				father = array[ randomIndex >= indexOfBest ? randomIndex + 1 : randomIndex];
+			}
+			group.clear();
+			child = mother.crossOver(father);
+			childList.add(child.mutate());
+		}
+		
+		
+	}
 	
-
-	private void sigmaScaling() {
-		double[] sigmaValues = new double[adultList.size()];
-		double total = 0.0;
-		for(int i = 0; i < sigmaValues.length; i++){
-			sigmaValues[i] = 1.0 + (adultList.get(i).fitness - averageScore) / ( 2* std);
-			total += sigmaValues[i];
+	private void fitnessScaling() {
+		double[] values = new double[adultList.size()];
+		for(int i = 0; i < values.length; i++){
+			values[i] = adultList.get(i).fitness/totalScore;
 		}
 		Genotype mother = null, father = null, child;
 		double value;
 		double collector;
 		while(childList.size() < Parameters.adults){
-			mother = null; 
+			mother = null;
 			father = null;
-			value = random.nextDouble() * total;
+			value = random.nextDouble();
 			collector = 0.0;
-			for(int i = 0; i < sigmaValues.length; i++){
-				collector += sigmaValues[i];
+			for(int i = 0; i < values.length; i++){
+				collector += values[i];
 				if(collector >= value){
 					mother = adultList.get(i);
 					break;
@@ -106,10 +156,10 @@ public class EA {
 			if(mother == null){
 				mother = adultList.get(adultList.size() - 1);
 			}
-			value = random.nextDouble() * total;
+			value = random.nextDouble();
 			collector = 0.0;
-			for(int i = 0; i < sigmaValues.length; i++){
-				collector += sigmaValues[i];
+			for(int i = 0; i < values.length; i++){
+				collector += values[i];
 				if(collector >= value){
 					father = adultList.get(i);
 					break;
@@ -121,12 +171,7 @@ public class EA {
 			child = mother.crossOver(father);
 			childList.add(child.mutate());
 		}
-
-
 	}
-
-	
-
 	private void log(){
 		best = null;
 		averageScore = 0.0;
@@ -134,11 +179,15 @@ public class EA {
 		bestScore = 0.0;
 		std = 0.0;
 		for(int i = 0; i < adultList.size(); i++){
+			if(Parameters.dynamicBoard){
+				Fitness.function(adultList.get(i));
+			}
 			scores[i] = adultList.get(i).fitness;
 			totalScore += scores[i];
 			if(scores[i] >= bestScore){
 				bestScore = scores[i];
 				best = adultList.get(i);
+				Fitness.setBest(best);
 			}
 		}
 		averageScore = totalScore / adultList.size();
