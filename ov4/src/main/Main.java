@@ -8,8 +8,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import logic.Board;
-import logic.EA;
-import logic.Fitness;
 
 
 public class Main {

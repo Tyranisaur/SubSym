@@ -5,7 +5,7 @@ public class Fitness {
 	private static Board defaultBoard;
 	private static Board activeBoard;
 	private static NeuralNetwork network;
-	private static CellType[] sensorData;
+	private static SensorType[] sensorData;
 	private static Impact output;
 	private static Genotype best;
 
@@ -31,19 +31,22 @@ public class Fitness {
 					value += 0.0;
 				}
 				else if(output == Impact.AVOIDBIG){
-					value += 10.0;
+					value += 20.0;
 				}
 				else if(output == Impact.AVOIDSMALL){
-					value -= 10.0;
+					value -= 100.0;
 				}
 				else if(output == Impact.CATCH){
 					value += 20.0;
 				}
 				else if(output == Impact.HIT){
-					value -= 30.0;
+					value -= 100.0;
 				}
-				else if(output == Impact.PART){
+				else if(output == Impact.SMALLPART){
 					value += 5.0;
+				}
+				else if(output == Impact.BIGPART){
+					value -= 20.0;
 				}
 
 			}

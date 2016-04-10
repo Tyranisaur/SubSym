@@ -13,28 +13,25 @@ public class Board {
 	private int currentObject;
 
 	public Board(){
-		trackerX = random.nextInt(30);
+		trackerX = random.nextInt(Parameters.gametype == GameType.NOWRAP ? 30 - 5 :30);
 		currentObject = 0;
-		objectX = new int[43];
-		for(int i = 0; i < 43; i++){
-			objectX[i] = random.nextInt(30);
-		}
 		objectY = 0;
-		objectSize = new int[43];
-		for(int i = 0; i < 43; i++){
+		objectSize = new int[Parameters.objects];
+		for(int i = 0; i < Parameters.objects; i++){
 			objectSize[i] = random.nextInt(6) + 1;
+		}
+		objectX = new int[Parameters.objects];
+		for(int i = 0; i < Parameters.objects; i++){
+			objectX[i] = random.nextInt(Parameters.gametype == GameType.NOWRAP ? 30 - objectSize[i] :30);
 		}
 	}
 	public int getPlayerIndex(){
 		return trackerX;
 	}
 
-	public CellType[] sensorInput(){
-		if(objectY == 14){
-			objectY = 0;
-			currentObject++;
-		}
-		CellType[] ret = new CellType[5];
+	public SensorType[] sensorInput(){
+
+		SensorType[] ret = new SensorType[Parameters.sensorLength];
 
 		int position = trackerX;
 		int diff;
@@ -43,12 +40,15 @@ public class Board {
 			diff = Math.floorMod(position - objectX[currentObject], 30);
 
 			if(diff < objectSize[currentObject]){
-				ret[i] = CellType.OBJECT;
+				ret[i] = SensorType.OBJECT;
 			}
 			else{
-				ret[i] = CellType.EMPTY;
+				ret[i] = SensorType.EMPTY;
 			}
-
+		}
+		if(ret.length == 7){
+			ret[5] = trackerX == 0 ? SensorType.WALL : SensorType.EMPTY;
+			ret[6] = trackerX == 25 ? SensorType.WALL : SensorType.EMPTY;
 		}
 
 		return ret;
@@ -59,37 +59,72 @@ public class Board {
 
 	public Impact move(int move){
 
-		
-		trackerX += move;
-		trackerX = Math.floorMod(trackerX, 30);
+		if(move != 42){
+			trackerX += move;
+		}
+		else{
+			objectY = 14;
+		}
+		if(Parameters.gametype == GameType.NOWRAP){
 
-		objectY++;
+			if(trackerX < 0){
+				trackerX = 0;
+			}
+			if(trackerX > 25){
+				trackerX = 25;
+			}
+		}
+		else{
+			trackerX = Math.floorMod(trackerX, 30);
+		}
+		
+
 		if(objectY < 14){
+			objectY++;
 			return Impact.VOID;
 		}
-		CellType[] sensorData = sensorInput();
+
+		SensorType[] sensorData = sensorInput();
+
+
 		int collisions = 0;
 		for(int i = 0; i < 5; i++){
-			if(sensorData[i] == CellType.OBJECT){
+			if(sensorData[i] == SensorType.OBJECT){
 				collisions++;
 			}
 		}
 		if(collisions == 0){
 			if(objectSize[currentObject] > 4){
+				objectY = 0;
+				currentObject++;
 				return Impact.AVOIDBIG;
 			}
 			else{
+				objectY = 0;
+				currentObject++;
 				return Impact.AVOIDSMALL;
 			}
 		}
 		if(objectSize[currentObject] > 4){
-			return Impact.HIT;
-			
+			if(collisions == 5){
+				objectY = 0;
+				currentObject++;
+				return Impact.HIT;
+			}
+			if(collisions < 5){
+				objectY = 0;
+				currentObject++;
+				return Impact.BIGPART;
+			}
 		}
 		if(collisions < objectSize[currentObject]){
-			return Impact.PART;
+			objectY = 0;
+			currentObject++;
+			return Impact.SMALLPART;
 		}
 		if(collisions == objectSize[currentObject]){
+			objectY = 0;
+			currentObject++;
 			return Impact.CATCH;
 		}
 		System.out.println("this should never happen");
@@ -106,12 +141,13 @@ public class Board {
 		ret.objectSize = objectSize;
 		return ret;
 	}
-/**
- * [xpos, ypos, width]
- * @return
- */
+	/**
+	 * [xpos, ypos, width]
+	 * @return
+	 */
 	public int[] getObjectData(){
 		int[] ret = {objectX[currentObject], objectY, objectSize[currentObject]};
+
 		return ret;
 	}	
 }

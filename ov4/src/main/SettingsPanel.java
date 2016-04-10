@@ -15,7 +15,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import logic.EA;
-import logic.Fitness;
+import logic.GameType;
 import logic.Parameters;
 
 public class SettingsPanel extends JPanel implements ActionListener, ChangeListener{
@@ -26,7 +26,9 @@ public class SettingsPanel extends JPanel implements ActionListener, ChangeListe
 	private static final long serialVersionUID = -4074725417996834554L;
 	ButtonGroup btnGroup;
 	GridBagConstraints gbc;
-	JRadioButton[] scenarioButtons;
+	JRadioButton standardButton;
+	JRadioButton pullButton;
+	JRadioButton nowrapButton;
 	BoardPanel boardPanel;
 
 	JButton startButton;
@@ -42,36 +44,35 @@ public class SettingsPanel extends JPanel implements ActionListener, ChangeListe
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		add(new JLabel("Scenario "), gbc);
-		scenarioButtons = new JRadioButton[3];
-			gbc.gridx = 0;
-			gbc.gridy++;
-			add(new JLabel("Standard"), gbc);
-			gbc.gridx = 1;
-			scenarioButtons[0] = new JRadioButton();
-			add(scenarioButtons[0], gbc);
-			scenarioButtons[0].addActionListener(this);
-			btnGroup.add(scenarioButtons[0]);
-			
-			gbc.gridx = 0;
-			gbc.gridy++;
-			add(new JLabel("Pull"), gbc);
-			gbc.gridx = 1;
-			scenarioButtons[1] = new JRadioButton();
-			add(scenarioButtons[1], gbc);
-			scenarioButtons[1].addActionListener(this);
-			btnGroup.add(scenarioButtons[1]);
-			
-			gbc.gridx = 0;
-			gbc.gridy++;
-			add(new JLabel("No wrap"), gbc);
-			gbc.gridx = 1;
-			scenarioButtons[2] = new JRadioButton();
-			add(scenarioButtons[2], gbc);
-			scenarioButtons[2].addActionListener(this);
-			btnGroup.add(scenarioButtons[2]);
+		gbc.gridx = 0;
+		gbc.gridy++;
+		add(new JLabel("Standard"), gbc);
+		gbc.gridx = 1;
+		standardButton = new JRadioButton();
+		add(standardButton, gbc);
+		standardButton.addActionListener(this);
+		btnGroup.add(standardButton);
 
-		
-		scenarioButtons[0].setSelected(true);
+		gbc.gridx = 0;
+		gbc.gridy++;
+		add(new JLabel("Pull"), gbc);
+		gbc.gridx = 1;
+		pullButton = new JRadioButton();
+		add(pullButton, gbc);
+		pullButton.addActionListener(this);
+		btnGroup.add(pullButton);
+
+		gbc.gridx = 0;
+		gbc.gridy++;
+		add(new JLabel("No wrap"), gbc);
+		gbc.gridx = 1;
+		nowrapButton = new JRadioButton();
+		add(nowrapButton, gbc);
+		nowrapButton.addActionListener(this);
+		btnGroup.add(nowrapButton);
+
+
+		standardButton.setSelected(true);
 		gbc.gridy++;
 		gbc.gridx = 0;
 		startButton = new JButton("Generate");
@@ -106,13 +107,32 @@ public class SettingsPanel extends JPanel implements ActionListener, ChangeListe
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		for(int i = 0; i < scenarioButtons.length; i++){
-			if(e.getSource() == scenarioButtons[i]){
-				//TODO handle different scenario
-
-			}
+		if(e.getSource() == standardButton){
+			Parameters.gametype = GameType.STANDARD;
 		}
+		if(e.getSource() == pullButton){
+			Parameters.gametype = GameType.PULL;
+		}
+		if(e.getSource() == nowrapButton){
+			Parameters.gametype = GameType.NOWRAP;
+		}
+
 		if(e.getSource() == startButton){
+			if(Parameters.gametype == GameType.STANDARD){
+				Parameters.objects = 41;
+				Parameters.length = 34;
+				Parameters.sensorLength = 5;
+			}
+			if(Parameters.gametype == GameType.PULL){
+				Parameters.objects = 600;
+				Parameters.length = 44;
+				Parameters.sensorLength = 5;
+			}
+			if(Parameters.gametype == GameType.NOWRAP){
+				Parameters.objects = 41;
+				Parameters.length = 38;
+				Parameters.sensorLength = 7;
+			}
 			EA ea = new EA();
 			ea.run();
 		}

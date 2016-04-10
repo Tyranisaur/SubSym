@@ -9,8 +9,7 @@ import javax.swing.JPanel;
 
 
 import logic.Board;
-import logic.CellType;
-import logic.Direction;
+import logic.SensorType;
 import logic.Fitness;
 import logic.NeuralNetwork;
 import logic.Parameters;
@@ -68,20 +67,19 @@ public class BoardPanel extends JPanel {
 		board = Fitness.getBoard();
 		NeuralNetwork network;
 		int move;
-		CellType[] sensorData;
+		SensorType[] sensorData;
 		network = new NeuralNetwork(Fitness.getBest());
 		for(int step = 0; step < Parameters.stepsPerGeneration; step++){
 			sensorData = board.sensorInput();
 			move = network.caluculateMove(sensorData);
-			System.out.println(move);
-			board.move(move);
 			try {
-				Thread.sleep(Parameters.millisPerVisualiztionStep);
+				Thread.sleep(move == 42 ? 300 : Parameters.millisPerVisualiztionStep);
 			}
 			catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			board.move(move);
 			repaint();
 		}
 
