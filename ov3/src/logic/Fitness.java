@@ -42,9 +42,9 @@ public class Fitness {
 
 	public static void function(Genotype gene){
 		double value = 0.0;
+		Direction move;
 		for(int i = 0; i < Parameters.scanarios; i++){
 			activeBoard = defaultBoard[i].clone();
-			Direction move;
 			network = new NeuralNetwork(gene);
 			for(int step = 0; step < Parameters.stepsPerGeneration; step++){
 				sensorData = activeBoard.sensorInput();

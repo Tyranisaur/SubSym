@@ -9,7 +9,7 @@ public class Parameters {
 	public static int adults = 800;
 	public static double treshhold = - 0.25;
 	public static int stepsPerGeneration = 60;
-	public static boolean dynamicBoard = true;
+	public static boolean dynamicBoard = false;
 	public static boolean newVisualizationScenario = true;
 	public static int generationsPerRun = 100;
 	public static int scanarios = 5;

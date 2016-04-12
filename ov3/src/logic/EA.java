@@ -133,45 +133,6 @@ public class EA {
 		
 	}
 	
-	private void fitnessScaling() {
-		double[] values = new double[adultList.size()];
-		for(int i = 0; i < values.length; i++){
-			values[i] = adultList.get(i).fitness/totalScore;
-		}
-		Genotype mother = null, father = null, child;
-		double value;
-		double collector;
-		while(childList.size() < Parameters.adults){
-			mother = null;
-			father = null;
-			value = random.nextDouble();
-			collector = 0.0;
-			for(int i = 0; i < values.length; i++){
-				collector += values[i];
-				if(collector >= value){
-					mother = adultList.get(i);
-					break;
-				}
-			}
-			if(mother == null){
-				mother = adultList.get(adultList.size() - 1);
-			}
-			value = random.nextDouble();
-			collector = 0.0;
-			for(int i = 0; i < values.length; i++){
-				collector += values[i];
-				if(collector >= value){
-					father = adultList.get(i);
-					break;
-				}
-			}
-			if(father == null){
-				father = adultList.get(adultList.size() - 1);
-			}
-			child = mother.crossOver(father);
-			childList.add(child.mutate());
-		}
-	}
 	private void log(){
 		best = null;
 		averageScore = 0.0;
