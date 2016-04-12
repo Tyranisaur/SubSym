@@ -37,7 +37,7 @@ public class Fitness {
 					value -= 100.0;
 				}
 				else if(output == Impact.CATCH){
-					value += 20.0;
+					value += 25.0;
 				}
 				else if(output == Impact.HIT){
 					value -= 100.0;
@@ -46,7 +46,7 @@ public class Fitness {
 					value += 5.0;
 				}
 				else if(output == Impact.BIGPART){
-					value -= 20.0;
+					value -= 30.0;
 				}
 
 			}

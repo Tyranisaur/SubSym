@@ -33,10 +33,10 @@ public class Board {
 
 		SensorType[] ret = new SensorType[Parameters.sensorLength];
 
-		int position = trackerX;
+		int position;
 		int diff;
 		for(int i = 0; i < 5; i++){
-			position = (position + 1) % 30;
+			position = (trackerX + i) % 30;
 			diff = Math.floorMod(position - objectX[currentObject], 30);
 
 			if(diff < objectSize[currentObject]){
