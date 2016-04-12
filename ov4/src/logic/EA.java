@@ -26,10 +26,10 @@ public class EA {
 		generation = 0;
 		childList = new ArrayList<Genotype>();
 		adultList = new ArrayList<Genotype>();
+		Fitness.setNewBoard();
 		for(int i = 0; i < Parameters.adults; i++){
 
 			adultList.add(new Genotype());
-
 			Fitness.function(adultList.get(i));
 		}
 	}
@@ -41,17 +41,14 @@ public class EA {
 		running = true;
 
 		while(running && generation < Parameters.generationsPerRun){
-
-			Fitness.nextGeneration();
 			log();
-			childList.clear();
+
 			tournamentSelection();
 			selectAdults();
-
+			
 			generation++;
 		}
 		running = false;
-		Fitness.doneTesting();
 	}
 
 	private void selectAdults() {
@@ -60,10 +57,12 @@ public class EA {
 			Fitness.function(child);
 			tempAdults.add(child);
 		}
+		childList.clear();
+		
 		for(Genotype adult: adultList){
 			tempAdults.add(adult);
 		}
-		
+		 
 		int surplus = tempAdults.size() - Parameters.adults;
 		if(surplus > 0){
 			tempAdults.sort(comp);
@@ -107,7 +106,7 @@ public class EA {
 			group.clear();
 			while(group.size() < Parameters.tournamentSize){
 				group.add(adultList.get(random.nextInt(adultList.size())));
-			
+
 			}
 			group.toArray(array);
 			indexOfBest = 0;
@@ -129,20 +128,20 @@ public class EA {
 			child = mother.crossOver(father);
 			childList.add(child.mutate());
 		}
-		
-		
+
+
 	}
+
 	
 	private void log(){
 		best = null;
 		averageScore = 0.0;
 		totalScore = 0.0;
-		bestScore = 0.0;
+		bestScore = -10000000.0;
 		std = 0.0;
 		for(int i = 0; i < adultList.size(); i++){
-			if(Parameters.dynamicBoard){
-				Fitness.function(adultList.get(i));
-			}
+			Fitness.function(adultList.get(i));
+
 			scores[i] = adultList.get(i).fitness;
 			totalScore += scores[i];
 			if(scores[i] >= bestScore){
