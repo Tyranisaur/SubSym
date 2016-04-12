@@ -69,13 +69,14 @@ public class BoardPanel extends JPanel {
 		int move;
 		SensorType[] sensorData;
 		network = new NeuralNetwork(Fitness.getBest());
+		
 		for(int step = 0; step < Parameters.stepsPerGeneration; step++){
 			sensorData = board.sensorInput();
 			move = network.caluculateMove(sensorData);
 			try {
 				Thread.sleep(move == 42 ? 300 : Parameters.millisPerVisualiztionStep);
 			}
-			catch (InterruptedException e) {
+			catch (InterruptedException e){
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
