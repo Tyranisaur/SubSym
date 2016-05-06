@@ -20,7 +20,7 @@ public class EA {
 		random = new Random();
 
 		population = new ArrayList<Genotype>();
-		for(int i = 0; i < Parameters.populationSize * 2; i++){
+		for(int i = 0; i < Parameters.populationSize; i++){
 			Genotype gene = new Genotype();
 			Fitness.evaluate(gene);
 			population.add(gene);
@@ -32,16 +32,14 @@ public class EA {
 	public void run(){
 
 		while(generation < Parameters.generations){
-			calculateCrowding(population);
-			trimPopulation();
 
 			tournamentSelection();
 			population.addAll(childList);
 			childList.clear();
 			generation++;
+			calculateCrowding(population);
+			trimPopulation();
 		}
-		calculateCrowding(population);
-		trimPopulation();
 		calculateCrowding(population);
 		printResults();
 	}
@@ -69,6 +67,7 @@ public class EA {
 			throw new IllegalStateException("poplulation size error");
 		}
 		else if(deficit == 0){
+			population = newPopulation;
 			return;
 		}
 		int indexOfBest = 0;
@@ -80,7 +79,12 @@ public class EA {
 					bestDistance = fronts.get(currentFront).get(i).crowdingDistance;
 				}
 			}
-			newPopulation.add(fronts.get(currentFront).remove(indexOfBest));
+			if(bestDistance == 0.0){
+				newPopulation.add(fronts.get(currentFront).remove(random.nextInt(fronts.get(currentFront).size())));
+			}
+			else{
+				newPopulation.add(fronts.get(currentFront).remove(indexOfBest));
+			}
 			bestDistance = 0.0;
 			indexOfBest = 0;
 		}
@@ -103,7 +107,7 @@ public class EA {
 			group.toArray(array);
 			indexOfBest = 0;
 			for(int i = 0; i < array.length; i++){
-				if(array[i].domination(array[indexOfBest]) > 0){
+				if(crowdindOperator(array[i], array[indexOfBest]) > 0){
 					indexOfBest = i;
 				}
 			}
@@ -122,7 +126,7 @@ public class EA {
 			group.toArray(array);
 			indexOfBest = 0;
 			for(int i = 0; i < array.length; i++){
-				if(array[i].domination(array[indexOfBest]) > 1){
+				if(crowdindOperator(array[i], array[indexOfBest]) > 0){
 					indexOfBest = i;
 				}
 			}
@@ -154,9 +158,6 @@ public class EA {
 		while(workingList.size() > 0){
 			p = workingList.remove(0);
 			for(Genotype other: population){
-				if(p == other){
-					continue;
-				}
 
 				if( p.domination(other) > 0){
 					dominationSets.get(p).add(other);
@@ -184,6 +185,9 @@ public class EA {
 						dominatedItem.rank = currentFront + 1;
 						newFront.add(dominatedItem);
 					}
+					else if(dominationAmounts.get(dominatedItem) < 0){
+						throw new IllegalStateException("Dominated by a negative amount of solutions");
+					}
 				}
 			}
 			if(newFront.size() > 0){
@@ -201,21 +205,21 @@ public class EA {
 
 	public void calculateCD(ArrayList<Genotype> front){
 		Collections.sort(front);
+		
 		front.get(0).crowdingDistance = Double.MAX_VALUE;
 		front.get(front.size() - 1).crowdingDistance = Double.MAX_VALUE;
+		double costDenominator = (front.get(front.size() -1).costScore - front.get(0).costScore);
+		double distanceDenominator = (front.get(front.size() -1).distanceScore - front.get(0).distanceScore);
 		for(int i = 1; i < front.size() - 1; i++){
-			try{
-				front.get(i).crowdingDistance += (front.get(i+1).costScore - front.get(i-1).costScore)/(front.get(front.size() -1).costScore - front.get(0).costScore);
+			front.get(i).crowdingDistance = 0.0;
+			if(costDenominator != 0.0){
+				front.get(i).crowdingDistance += (front.get(i+1).costScore - front.get(i-1).costScore)/costDenominator;
 			}
-			catch(ArithmeticException e){
-
+			
+			if(distanceDenominator != 0.0){
+				front.get(i).crowdingDistance += (front.get(i+1).distanceScore - front.get(i-1).distanceScore)/distanceDenominator;
 			}
-			try{
-				front.get(i).crowdingDistance += (front.get(i+1).distanceScore - front.get(i-1).distanceScore)/(front.get(front.size() -1).distanceScore - front.get(0).distanceScore);
-
-			}
-			catch(ArithmeticException e){
-			}
+			
 		}
 	}
 

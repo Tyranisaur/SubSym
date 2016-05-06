@@ -1,7 +1,5 @@
 package main;
 
-import java.util.ArrayList;
-
 public class Fitness {
 
 	public static void evaluate(Genotype gene){
@@ -11,7 +9,6 @@ public class Fitness {
 		int[] path = gene.getPath();
 		int prevCity = path[path.length - 1];
 		int currentCity;
-		ArrayList<int[]> list = Parameters.costLists;
 		for(int i = 0; i < path.length; i++){
 			currentCity = path[i];
 			
