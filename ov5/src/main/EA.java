@@ -30,7 +30,7 @@ public class EA {
 	}
 
 	public void run(){
-
+		calculateCrowding(population);
 		while(generation < Parameters.generations){
 
 			tournamentSelection();
